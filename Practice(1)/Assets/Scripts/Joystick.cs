@@ -32,6 +32,11 @@ public class Joystick : MonoBehaviour, IPointerDownHandler, IPointerUpHandler, I
 
     public void OnPointerDown(PointerEventData eventData)
     {
+        StartCoroutine("PlayerMove");
+    }
+
+    public void OnPointerUp(PointerEventData eventData)
+    {
         transform.localPosition = Vector3.zero;
         moveForeward = Vector3.zero;
         moveRotate = Vector3.zero;
@@ -39,11 +44,6 @@ public class Joystick : MonoBehaviour, IPointerDownHandler, IPointerUpHandler, I
 
         walking = false;
         player.GetComponent<Animator>().SetBool("Walk", false);
-    }
-
-    public void OnPointerUp(PointerEventData eventData)
-    {
-        StartCoroutine("PlayerMove");
     }
     IEnumerator PlayerMove()
     {
