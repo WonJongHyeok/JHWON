@@ -11,13 +11,15 @@ public class EnemyManager : MonoBehaviour
     }
     public currentState curstate = currentState.Idle;
 
+    
     private Transform _transform;
     private Transform Playertransform;
     private NavMeshAgent nvagent;
     private Animator ani;
 
     public float TraceDist = 20.0f;
-    public float AttackDist = 3.0f;
+    public float AttackDist = 1.0f;
+    
 
     private bool IsDead = false;
 
@@ -72,11 +74,13 @@ public class EnemyManager : MonoBehaviour
                     ani.SetBool("Trace", true);
                     break;
                 case currentState.Attack:
+                    nvagent.enabled = false;
                     break;
             }
             yield return null;
         }
     }    
+    
     
     void Update()
     {
