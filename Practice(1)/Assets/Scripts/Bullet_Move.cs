@@ -6,6 +6,7 @@ public class Bullet_Move : MonoBehaviour
 {
     public float BulletSpeed;
     public float DestroyPos;
+    public float damage = 10.0f;
     
     // Update is called once per frame
     void Update()

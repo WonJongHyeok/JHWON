@@ -16,9 +16,14 @@ public class EnemyManager : MonoBehaviour
     private Transform Playertransform;
     private NavMeshAgent nvagent;
     private Animator ani;
+    
 
     public float TraceDist = 20.0f;
-    public float AttackDist = 1.0f;
+    public float AttackDist = 1.5f;
+    public float attacktimer = 0f;
+    public float attackdelay = 4.0f;
+    public float damage = 1.0f;
+    
     
 
     private bool IsDead = false;
@@ -29,7 +34,7 @@ public class EnemyManager : MonoBehaviour
         _transform = this.gameObject.GetComponent<Transform>();
         Playertransform = GameObject.FindWithTag("Player").GetComponent<Transform>();
         nvagent = this.gameObject.GetComponent<NavMeshAgent>();
-        ani = this.gameObject.GetComponent<Animator>();
+        ani = GetComponent<Animator>();
 
         StartCoroutine(checkState());
         StartCoroutine(checkStateAction());
@@ -41,18 +46,22 @@ public class EnemyManager : MonoBehaviour
         {
             yield return new WaitForSeconds(0.2f);
 
-            float Dist = Vector3.Distance(Playertransform.position, -transform.position);
+            float Dist = Vector3.Distance(Playertransform.position, transform.position);
             if(Dist <= AttackDist)
             {
                 curstate = currentState.Attack;
+                Debug.Log("Attack");
             }
             else if(Dist >= AttackDist)
             {
                 curstate = currentState.Trace;
+                Debug.Log("trace");
+                //nvagent.Warp(newPos);
             }
             else
             {
                 curstate = currentState.Idle;
+                
             }
         }
     }
@@ -67,14 +76,18 @@ public class EnemyManager : MonoBehaviour
                 case currentState.Idle:
                     nvagent.enabled = false;
                     ani.SetBool("Trace", false);
+                    
                     break;
                 case currentState.Trace:
-                    nvagent.destination= Playertransform.position;
+                    nvagent.destination = Playertransform.position;
                     nvagent.enabled = true;
                     ani.SetBool("Trace", true);
+                    
                     break;
                 case currentState.Attack:
                     nvagent.enabled = false;
+                    Attack();
+                    
                     break;
             }
             yield return null;
@@ -82,8 +95,30 @@ public class EnemyManager : MonoBehaviour
     }    
     
     
-    void Update()
+    public void Attack()
     {
-        
+        if (curstate == currentState.Attack)
+        {
+            if (attacktimer > attackdelay)
+            {
+                transform.LookAt(Playertransform.position);
+                ani.SetBool("Attack", true);
+                
+                attacktimer = 0f;
+            }
+
+            else
+            {
+                curstate = currentState.Idle;
+                ani.SetBool("Attack", false);
+                
+            }
+            attacktimer += Time.deltaTime;
+        }
+        else
+        {
+            curstate = currentState.Trace;
+        }
     }
+
 }
